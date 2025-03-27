@@ -6,7 +6,7 @@ import subprocess
 from collections import namedtuple
 from os import PathLike
 from pathlib import Path
-from typing import Iterable, Tuple
+from typing import Iterable, List, Tuple
 
 
 def _clean_files(src_dir: PathLike, extend_files: str) -> None:
@@ -24,15 +24,18 @@ def _clean_files(src_dir: PathLike, extend_files: str) -> None:
         "tests/README.md",
     ] #yapf: disable
 
+
     files_to_remove.extend(extend_files)
 
     for file in files_to_remove:
         file_path = src_dir / file
         if file_path.is_dir():
             shutil.rmtree(file_path)
-            logging.debug(f"Removed directory: {file_path}")
+            logging.debug(f"Removed directory: {file_path}"
+            )
         else:
-            file_path.unlink()
+            file_path.unlink(
+            )
             logging.debug(f"Removed file: {file_path}")
 
 
@@ -91,7 +94,8 @@ def compress(tgt_pkg_name: Path, src_dir: Path) -> None:
 
 LibInfo = namedtuple(
     'LibInfo',
-    ('name', 'skip_windows', 'is_static', 'path', 'cleanfiles', 'cleantrees'))
+    ('name', 'skip_windows', 'is_static', 'path', 
+    'cleanfiles', 'cleantrees'))
 
 LibListConfig = namedtuple('LibListConfig', ('libs', 'cleanfiles'))
 _builtin_liblist = {
