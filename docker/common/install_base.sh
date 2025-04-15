@@ -72,6 +72,7 @@ install_python_rockylinux() {
     xz-devel \
     sqlite-devel \
     -y
+
   curl -L ${PYTHON_URL} | tar -zx -C /tmp
   cd /tmp/Python-${PYTHON_VERSION}
   bash -c "./configure --enable-shared --prefix=/opt/python/${PYTHON_VERSION} --enable-ipv6 \
