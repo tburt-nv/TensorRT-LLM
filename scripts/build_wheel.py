@@ -175,8 +175,8 @@ def setup_venv(project_dir: Path, requirements_file: Path,
         try:
             with open(requirements_file) as fp:
                 for line in fp:
-                    if line.startswith("torch"):
-                        version_required = Requirement(line)
+                    if line.startswith("    \"torch"):
+                        version_required = Requirement(line.strip(' ,"'))
                         break
         except FileNotFoundError:
             pass
@@ -196,7 +196,9 @@ def setup_venv(project_dir: Path, requirements_file: Path,
     print(
         f"-- Installing requirements from {requirements_file} into {venv_prefix}..."
     )
-    build_run(f'"{venv_python}" -m pip install -r "{requirements_file}"')
+    build_run(
+        f'"{venv_python}" -m pip install --extra-index-url https://download.pytorch.org/whl/cu128 -r "{requirements_file}"'
+    )
 
     venv_conan = setup_conan(scripts_dir, venv_python)
 
@@ -204,6 +206,7 @@ def setup_venv(project_dir: Path, requirements_file: Path,
 
 
 def setup_conan(scripts_dir, venv_python):
+    # TODO install build deps instead
     build_run(f'"{venv_python}" -m pip install conan==2.14.0')
     # Determine the path to the conan executable within the venv
     venv_conan = scripts_dir / "conan"
@@ -461,7 +464,7 @@ def main(*,
            for submodule in submodules):
         build_run('git submodule update --init --recursive')
     on_windows = platform.system() == "Windows"
-    requirements_filename = "requirements-dev-windows.txt" if on_windows else "requirements-dev.txt"
+    requirements_filename = "pyproject.toml"
 
     # Setup venv and install requirements
     venv_python, venv_conan = setup_venv(project_dir,
@@ -866,7 +869,7 @@ def main(*,
             clear_folder(dist_dir)
 
         build_run(
-            f'\"{venv_python}\" -m build {project_dir} --skip-dependency-check --no-isolation --wheel --outdir "{dist_dir}"'
+            f'\"{venv_python}\" -m build {project_dir} --skip-dependency-check --no-isolation --installer uv --wheel --outdir "{dist_dir}"'
         )
 
     if install:

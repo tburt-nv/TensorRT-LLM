@@ -6,6 +6,148 @@ requires = ["setuptools >= 64", "pip >= 24"]
 build-backend = "setuptools.build_meta"
 
 ####################################################################################################
+###############################  PROJECT DATA  #####################################################
+####################################################################################################
+[project]
+name = "tensorrt_llm"
+dynamic = ["version", "description", "readme", "license", "authors", "keywords", "classifiers", "scripts"]
+requires-python = ">=3.7, <4"
+dependencies = [
+    "accelerate>=1.7.0",
+    "build",
+    "colored",
+    "cuda-python>=12,<13",
+    "diffusers>=0.27.0",
+    "lark",
+    "mpi4py",
+    "numpy<2",
+    "onnx>=1.18.0",
+    "onnx_graphsurgeon>=0.5.2",
+    "openai",
+    "polygraphy",
+    "psutil",
+    "nvidia-ml-py>=12,<13",
+    # Just a wrapper since nvidia-modelopt requires pynvml
+    "pynvml==12.0.0",
+    "pulp",
+    "pandas",
+    "h5py==3.12.1",
+    "StrEnum",
+    "sentencepiece>=0.1.99",
+    "tensorrt~=10.11.0",
+    # https://docs.nvidia.com/deeplearning/frameworks/pytorch-release-notes/rel-25-06.html#rel-25-06 uses 2.8.0a0.
+    "torch>=2.7.1,<=2.8.0a0",
+    "torchvision",
+    "nvidia-modelopt[torch]~=0.33.0",
+    "nvidia-nccl-cu12",
+    "nvidia-cuda-nvrtc-cu12",
+    "transformers==4.55.0",
+    "prometheus_client",
+    "prometheus_fastapi_instrumentator",
+    "pydantic>=2.9.1",
+    "pydantic-settings[yaml]",
+    "omegaconf",
+    "pillow==10.3.0",
+    "wheel<=0.45.1",
+    "optimum",
+    # evaluate needs datasets>=2.0.0 which triggers datasets>3.1.0 which is not stable: https://github.com/huggingface/datasets/issues/7467
+    "datasets==3.1.0",
+    "evaluate",
+    "mpmath>=1.3.0",
+    "click",
+    "click_option_group",
+    "aenum",
+    "pyzmq",
+    "fastapi==0.115.4",
+    "uvicorn",
+    "setuptools<80",
+    "ordered-set",
+    "peft",
+    "einops",
+    "flashinfer-python==0.2.5",
+    "opencv-python-headless",
+    "xgrammar==0.1.21",
+    "llguidance==0.7.29",
+    "jsonschema",
+    "backoff",
+    "nvtx",
+    # FIXME: matplotlib is added to make nvtx happy
+    "matplotlib",
+    "meson",
+    "ninja",
+    "etcd3",
+    "blake3",
+    "soundfile",
+    "triton==3.3.1; platform_machine == 'x86_64'",
+    "tiktoken",
+    "blobfile",
+    "openai-harmony==0.0.4",
+    "protobuf>=4.25.8",
+]
+
+[project.optional-dependencies]
+devel = [
+    "einops",
+    "graphviz",
+    "mypy",
+    "mako",
+    "oyaml",
+    "parameterized",
+    "pre-commit",
+    "pybind11",
+    "pybind11-stubgen",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+    "pytest-csv",
+    "pytest-env",
+    "pytest-forked",
+    "pytest-xdist",
+    "pytest-timeout",
+    "pytest-split",
+    "pytest-mock",
+    "pytest-threadleak",
+    "rouge_score",
+    "cloudpickle",
+    "typing-extensions==4.12.2",
+    "bandit==1.7.7",
+    "jsonlines==4.0.0",
+    "jieba==0.42.1",
+    "rouge==1.0.1",
+    "pytest-rerunfailures",
+    "ruff==0.9.4",
+    "lm_eval[api]==0.4.8",
+    "docstring_parser",
+    "genai-perf==0.0.13"
+]
+
+####################################################################################################
+###############################  SETUPTOOLS CONFIGURATION ##########################################
+####################################################################################################
+[tool.setuptools.dynamic]
+version = {attr = "tensorrt_llm.version.__version__"}
+
+####################################################################################################
+###############################  UV CONFIGURATION ##################################################
+####################################################################################################
+[tool.uv]
+managed = true
+environments = [
+    "python_full_version >= '3.10' and python_full_version < '4'"
+]
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+
+[[tool.uv.index]]
+name = "torch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+
+[tool.uv.sources]
+torch = { index = "torch-cu128" }
+
+####################################################################################################
 ###############################  LINTING, FORMATTING AND TESTING CONFIGURATION  ####################
 ####################################################################################################
 [tool.isort]
