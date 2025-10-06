@@ -14,6 +14,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 import subprocess as sp
 import sys
 
@@ -58,6 +59,9 @@ def main():
 
     # Run pre-commit on all files
     try:
+        # Use the TRAVIS env var to limit the number of parallel jobs to avoid OOM issues
+        # See https://github.com/pre-commit/pre-commit/issues/3551
+        os.environ["TRAVIS"] = "1"
         run_cmd("pre-commit run -a --show-diff-on-failure")
     except SystemExit:
         handle_check_failure("pre-commit checks failed")
