@@ -18,6 +18,7 @@ jobs:
       ### Configure DETECT environment variables
       env:
         DETECT_PROJECT_NAME: ${{ github.event.repository.name }}
+        BRIDGE_BLACKDUCK_DOWNLOAD_URL: "https://repo.blackduck.com/bds-integrations-release/com/blackduck/integration/detect/11.0.0/detect-11.0.0.jar"
 
       with:
         ### SCANNING: Required fields
