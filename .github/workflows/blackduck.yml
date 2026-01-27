@@ -26,7 +26,7 @@ jobs:
         blackducksca_token: ${{ secrets.BLACKDUCK_TOKEN }}
         include_diagnostics: true
         bridgecli_download_version: "3.9.0"
-        detect_args: --detect.project.group.name='github-first-group' --detect.excluded.detector.types='SETUPTOOLS,PIP' --detect.detector.search.depth=5
+        detect_args: --detect.project.group.name='github-first-group' --detect.excluded.detector.types='SETUPTOOLS,PIP,CONAN' --detect.detector.search.depth=5
 
         ### SCANNING: Optional fields
         # blackducksca_scan_failure_severities: 'BLOCKER,CRITICAL'
