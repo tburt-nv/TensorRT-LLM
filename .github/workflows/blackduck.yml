@@ -29,7 +29,7 @@ jobs:
         detect_args: --detect.project.group.name='github-first-group' --detect.excluded.detector.types='SETUPTOOLS,PIP,CONAN' --detect.detector.search.depth=5
 
         ### SCANNING: Optional fields
-        # blackducksca_scan_failure_severities: 'BLOCKER,CRITICAL'
+        blackducksca_scan_failure_severities: 'CRITICAL'
 
                 ### FIX PULL REQUEST CREATION: Uncomment below to enable
         # blackducksca_fixpr_enabled: true
