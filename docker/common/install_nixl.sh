@@ -45,6 +45,8 @@ meson setup builddir \
     --buildtype=release
 
 cd builddir && ninja install
+# Write version file for attribution tracking
+echo "${NIXL_VERSION}" > /opt/nvidia/nvda_nixl/VERSION
 cd ../..
 rm -rf nixl*  # Remove NIXL source tree to save space
 export LD_LIBRARY_PATH=$OLD_LD_LIBRARY_PATH

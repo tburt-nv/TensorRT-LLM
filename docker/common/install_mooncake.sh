@@ -46,6 +46,11 @@ cmake .. -DUSE_CUDA=ON -DBUILD_SHARED_LIBS=ON -DBUILD_UNIT_TESTS=OFF -DBUILD_EXA
     -DCMAKE_INSTALL_PREFIX=${MOONCAKE_INSTALL_PATH}
 make -j
 make install
+
+# Copy license and version info for attribution
+cp ../LICENSE-APACHE ${MOONCAKE_INSTALL_PATH}/LICENSE
+echo "${MOONCAKE_VERSION}" > ${MOONCAKE_INSTALL_PATH}/VERSION
+
 cd ../..
 rm -rf Mooncake
 

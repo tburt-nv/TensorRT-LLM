@@ -52,7 +52,7 @@ cleanup() {
   pip3 cache purge || true
 
   # Clean up documentation
-  rm -rf /usr/share/doc/* /usr/share/man/* /usr/share/info/*
+  rm -rf /usr/share/man/* /usr/share/info/*
 
   # Clean up locale files
   find /usr/share/locale -maxdepth 1 -mindepth 1 -type d ! -name 'en*' -exec rm -rf {} +
@@ -130,6 +130,7 @@ install_python_rockylinux() {
     LDFLAGS=-Wl,-rpath=/opt/python/${PYTHON_VERSION}/lib,--disable-new-dtags && make -j$(nproc) && make install"
   ln -s /opt/python/${PYTHON_VERSION}/bin/python3 /usr/local/bin/python
   echo "export PATH=/opt/python/${PYTHON_VERSION}/bin:\$PATH" >> "${ENV}"
+  cp LICENSE /opt/python/${PYTHON_VERSION}/LICENSE
   cd .. && rm -rf /tmp/Python-${PYTHON_VERSION}
 }
 
