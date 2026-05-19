@@ -96,7 +96,8 @@ if constraints_file.exists():
 if on_windows:
     package_data = [
         'libs/th_common.dll', 'libs/tensorrt_llm.dll',
-        'libs/nvinfer_plugin_tensorrt_llm.dll', 'bindings.*.pyd', "include/**/*"
+        'libs/nvinfer_plugin_tensorrt_llm.dll', 'bindings/_C.*.pyd',
+        "include/**/*"
     ]
 else:
     package_data = [
@@ -104,7 +105,7 @@ else:
         'libs/libnvinfer_plugin_tensorrt_llm.so',
         'libs/libtensorrt_llm_ucx_wrapper.so', 'libs/libdecoder_attention_0.so',
         'libs/libtensorrt_llm_nixl_wrapper.so',
-        'libs/libdecoder_attention_1.so', 'bindings.*.so', "include/**/*"
+        'libs/libdecoder_attention_1.so', 'bindings/_C.*.so', "include/**/*"
     ]
 
 package_data += [
@@ -184,16 +185,33 @@ def extract_from_precompiled(precompiled_location: str, package_data: List[str],
         for file in wheel.filelist:
             if file.filename.endswith(".py"):
                 continue
+            # Match against current package_data patterns
+            matched = False
             for filename_pattern in package_data:
                 if fnmatch.fnmatchcase(file.filename,
                                        f"tensorrt_llm/{filename_pattern}"):
+                    matched = True
                     break
-            else:
+            # Also accept legacy top-level bindings .so and relocate it
+            if not matched and fnmatch.fnmatchcase(file.filename,
+                                                   "tensorrt_llm/bindings.*"):
+                matched = True
+            if not matched:
                 continue
             print(
                 f"Extracting and including {file.filename} from precompiled wheel."
             )
             wheel.extract(file)
+
+    # Relocate legacy top-level bindings .so into the bindings/ package
+    import glob as _glob
+    for legacy_so in _glob.glob("tensorrt_llm/bindings.*.so") + _glob.glob(
+            "tensorrt_llm/bindings.*.pyd"):
+        new_name = os.path.basename(legacy_so).replace("bindings.", "_C.", 1)
+        dest = os.path.join("tensorrt_llm", "bindings", new_name)
+        os.makedirs(os.path.dirname(dest), exist_ok=True)
+        os.rename(legacy_so, dest)
+        print(f"Relocated {legacy_so} -> {dest}")
 
 
 use_precompiled: bool = os.getenv("TRTLLM_USE_PRECOMPILED") == "1"
