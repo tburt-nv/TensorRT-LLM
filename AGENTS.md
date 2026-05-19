@@ -9,49 +9,40 @@ This is **NVIDIA TensorRT-LLM** (`tensorrt_llm`), a C++/Python library for optim
 - **C++ runtime** (`cpp/`) — kernels, batch manager, executor; compiled into `libtensorrt_llm.so` and Python bindings (`tensorrt_llm/bindings/`)
 - **Python package** (`tensorrt_llm/`) — model definitions, LLM API, serving layer, quantization utilities
 
-### GPU requirement
+### GPU constraint
 
-The Cloud Agent VM has **no NVIDIA GPU**. This means:
+The Cloud Agent VM has **no NVIDIA GPU**. Inference, model building, and serving commands (`trtllm-serve`, `trtllm-build`, `trtllm-bench`) cannot run.
 
-- The C++ bindings cannot be built (`python3 scripts/build_wheel.py` requires CUDA).
-- `tensorrt_llm` cannot be imported at the Python level (the `__init__.py` import chain requires `tensorrt_llm.bindings`).
-- Unit tests that import `tensorrt_llm` will fail with `ModuleNotFoundError`.
-- Inference, model building, and serving commands (`trtllm-serve`, `trtllm-build`, `trtllm-bench`) cannot run.
+A Python-only stub for `tensorrt_llm/bindings/` is provided so that `import tensorrt_llm` works on CPU. Set `TRT_LLM_NO_LIB_INIT=1` to skip loading the compiled plugin `.so` files (which don't exist without a C++ build).
 
-### What works without GPU
+### Running unit tests without GPU
 
-- **All linting and formatting**: `pre-commit run --all-files` runs 21 hooks (isort, yapf, ruff, ruff-format, clang-format, cmake-format, codespell, autoflake, mdformat, etc.) and passes cleanly.
-- **Static analysis**: `ruff check`, `ruff format --check`, `isort --check-only`, `codespell`, `mypy` (for auto_deploy files).
-- **Code formatting**: `ruff format`, `yapf`, `isort`, `black` can format code.
-- **Pre-commit hooks** are installed and trigger on `git commit`.
+```bash
+TRT_LLM_NO_LIB_INIT=1 python3 -m pytest \
+  tests/unittest/llmapi/test_reasoning_parser.py \
+  tests/unittest/llmapi/test_build_cache.py \
+  tests/unittest/others/test_mapping.py \
+  tests/unittest/trt/quantization/test_mode.py \
+  tests/unittest/others/test_kv_cache_manager.py \
+  tests/unittest/others/test_module.py \
+  -v
+```
+
+Tests that import `tests/unittest/utils/util.py` call `cuda.cuInit()` at import time and cannot run without GPU.
 
 ### Lint/format commands
 
 ```bash
-# Run all pre-commit hooks on all files
-pre-commit run --all-files
-
-# Individual tools
-ruff check                          # Lint (auto_deploy + progressively enabled files)
-ruff format --check                 # Format check
-isort --check-only tensorrt_llm/    # Import sorting check
-codespell                           # Spell checking
+pre-commit run --all-files           # All 21 hooks
+ruff check                           # Lint (auto_deploy + progressively enabled files)
+ruff format --check                  # Format check
+isort --check-only tensorrt_llm/     # Import sorting check
 ```
-
-### Testing
-
-Most tests require a working `tensorrt_llm` import (which requires GPU + compiled bindings). To run tests in a GPU-enabled environment:
-
-```bash
-pytest tests/unittest/ -x -v
-```
-
-See `tests/README.md` and `tests/integration/README.md` for test organization details.
 
 ### Key project conventions
 
-- Python formatting uses **yapf** (pep8, 80 cols) for most files and **ruff** (100 cols) for `auto_deploy/` and progressively enabled files. See `pyproject.toml` for the exact include lists.
-- C++ code uses **clang-format** (v16+).
-- Commits must include a DCO sign-off (`git commit -s`).
+- Python formatting: **yapf** (pep8, 80 cols) for most files; **ruff** (100 cols) for `auto_deploy/` and progressively enabled files. See `pyproject.toml`.
+- C++ code: **clang-format** (v16+).
+- Commits must include DCO sign-off (`git commit -s`).
 - PR titles follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/).
-- The `pre-commit` config is in `.pre-commit-config.yaml`; linting config is in `pyproject.toml`.
+- Config: `.pre-commit-config.yaml` (hooks), `pyproject.toml` (linting).

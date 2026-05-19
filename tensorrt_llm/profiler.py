@@ -120,12 +120,16 @@ class PyNVMLContext:
             pynvml.nvmlShutdown()
 
 
+_device_get_memory_info_fn = None
 if pynvml is not None:
-    with PyNVMLContext():
-        _device_get_memory_info_fn = partial(
-            pynvml.nvmlDeviceGetMemoryInfo,
-            version=pynvml.nvmlMemory_v2,
-        )
+    try:
+        with PyNVMLContext():
+            _device_get_memory_info_fn = partial(
+                pynvml.nvmlDeviceGetMemoryInfo,
+                version=pynvml.nvmlMemory_v2,
+            )
+    except pynvml.NVMLError:
+        pynvml = None
 
 
 def host_memory_info(pid: Optional[int] = None) -> Tuple[int, int, int]:
