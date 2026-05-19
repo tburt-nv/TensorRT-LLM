@@ -33,6 +33,8 @@ def pytest_runtest_protocol(item, nextitem):
             import os
 
             import torch
+            if not torch.cuda.is_available():
+                break
             worker_count = int(os.environ.get('PYTEST_XDIST_WORKER_COUNT', 1))
 
             if (torch.cuda.memory_reserved(0) + torch.cuda.memory_allocated(0)

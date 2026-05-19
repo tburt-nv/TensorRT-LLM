@@ -614,7 +614,11 @@ def main(*,
             ) == 1, f"Exactly one pybind library should be present: {pybind_lib}"
             return pybind_lib[0]
 
-        install_file(get_pybind_lib(), pkg_dir)
+        pybind_lib = get_pybind_lib()
+        pybind_dst_name = pybind_lib.name.replace("bindings.", "_C.", 1)
+        bindings_pkg_dir = pkg_dir / "bindings"
+        bindings_pkg_dir.mkdir(parents=True, exist_ok=True)
+        install_file(pybind_lib, bindings_pkg_dir / pybind_dst_name)
         if not skip_stubs:
             with working_directory(project_dir):
                 build_run(f"\"{venv_python}\" -m pip install pybind11-stubgen")

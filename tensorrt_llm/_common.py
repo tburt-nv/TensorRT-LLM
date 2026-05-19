@@ -59,30 +59,30 @@ def _init(log_level: object = None) -> None:
 
     logger.info("Starting TensorRT-LLM init.")
 
-    # load plugin lib
-    _load_plugin_lib()
-
-    # load FT decoder layer and torch custom ops
-    project_dir = str(Path(__file__).parent.absolute())
-    if platform.system() == "Windows":
-        ft_decoder_lib = project_dir + "/libs/th_common.dll"
-    else:
-        ft_decoder_lib = project_dir + "/libs/libth_common.so"
     try:
+        # load plugin lib
+        _load_plugin_lib()
+
+        # load FT decoder layer and torch custom ops
+        project_dir = str(Path(__file__).parent.absolute())
+        if platform.system() == "Windows":
+            ft_decoder_lib = project_dir + "/libs/th_common.dll"
+        else:
+            ft_decoder_lib = project_dir + "/libs/libth_common.so"
         torch.classes.load_library(ft_decoder_lib)
         from ._torch.custom_ops import _register_fake
 
         _register_fake()
-    except Exception as e:
-        msg = (
-            "\nFATAL: Decoding operators failed to load. This may be caused by an incompatibility "
-            "between PyTorch and TensorRT-LLM. Please rebuild and install TensorRT-LLM."
+
+        MpiComm.local_init()
+
+        logger.info("TensorRT-LLM inited.")
+    except OSError as e:
+        logger.warning(
+            f"Could not load TensorRT-LLM C++ libraries: {e}. "
+            "This is expected on CPU-only machines without an NVIDIA driver. "
+            "GPU-dependent features will not be available."
         )
-        raise ImportError(str(e) + msg)
-
-    MpiComm.local_init()
-
-    logger.info("TensorRT-LLM inited.")
 
 
 def default_net() -> Network:
