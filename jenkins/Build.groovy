@@ -1,4 +1,4 @@
-@Library(['bloom-jenkins-shared-lib@main', 'trtllm-jenkins-shared-lib@main']) _
+@Library(['bloom-jenkins-shared-lib@dev-tburt-use-gcp-nrt', 'trtllm-jenkins-shared-lib@main']) _
 
 import groovy.transform.Field
 
