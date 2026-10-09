@@ -632,8 +632,8 @@ def buildImage(config, imageKeyToTag, versionOverride)
         }
 
         // Replace the base image and triton image with the internal mirror
-        BASE_IMAGE = BASE_IMAGE.replace("nvcr.io/", "artifactory.pdx.nvidia.com/docker-remote/")
-        TRITON_IMAGE = TRITON_IMAGE.replace("nvcr.io/", "artifactory.pdx.nvidia.com/docker-remote/")
+        BASE_IMAGE = BASE_IMAGE.replace("nvcr.io/", "urm.nvidia.com/docker/")
+        TRITON_IMAGE = TRITON_IMAGE.replace("nvcr.io/", "urm.nvidia.com/docker/")
 
         // Gated by BOLT_OVERLAY_ENABLED: when the overlay is enabled the
         // raw build is published to <tag>-noprofiles and the CANONICAL <tag> is
