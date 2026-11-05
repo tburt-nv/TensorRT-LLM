@@ -79,8 +79,13 @@ Original Source: https://github.com/Lightricks/LTX-2
 Copyright (c) 2025-2026 Lightricks Ltd.
 Licensed under the LTX-2 Community License Agreement
 
-The LTX-2 Community License Agreement applies only to use of the code in the
-`tensorrt_llm/_torch/visual_gen/models/ltx2/` directory of this project.
+Use of the LTX-2 model is subject to and governed by the
+LTX-2 Community License Agreement, available here:
+https://github.com/Lightricks/LTX-2/blob/main/LICENSE-2_x.
+
+The January 5, 2026 version of the LTX-2 Community License Agreement applies
+to any use of the code in the `tensorrt_llm/_torch/visual_gen/models/ltx2/`
+directory of this project.
 
 --------------------------------------------------------------------------------
 Mamba
